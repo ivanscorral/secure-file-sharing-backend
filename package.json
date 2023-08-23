@@ -4,6 +4,7 @@
   "description": "The back-end of the Secure File Sharing Platform handles file upload, encryption, storage, decryption, download, and expiration. It provides a secure and efficient means for temporary and anonymous file sharing.",
   "main": "index.js",
   "scripts": {
+    "start": "node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -12,6 +13,7 @@
   "author": "Ivan Sanchez Corral",
   "license": "MIT",
   "dependencies": {
+    "cors": "^2.8.5",
     "eslint": "^8.47.0",
     "express": "^4.18.2",
     "prettier": "^3.0.2"
