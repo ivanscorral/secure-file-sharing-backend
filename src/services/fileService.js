@@ -25,6 +25,8 @@ class FileService {
      */
   async createFile (metadata) {
     // TODO Implement file creation logic
+    console.log('Creating file with metadata: ', metadata)
+    return this.fileMetadataRepository.create(metadata)
   }
 
   /**

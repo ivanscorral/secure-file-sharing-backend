@@ -11,4 +11,6 @@ router.get('/download/:id', fileController.downloadFile)
 // Optional: Status Endpoint to check file metadata or status
 router.get('/status/:id', fileController.getFileStatus)
 
+router.get('/testStoreMetadata', fileController.testStoreMetadata)
+
 module.exports = router
