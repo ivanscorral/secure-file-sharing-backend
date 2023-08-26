@@ -1,13 +1,23 @@
+
 # Secure File Sharing System Backend Implementation
 
-A web-based platform that provides anonymous and secure file sharing. It leverages AES encryption and allows files to expire based on time or download count. MongoDB is used as the database.
+A web-based platform for anonymous and secure file sharing. This project uses AES encryption for file security and MongoDB for data storage. Files can be configured to expire either based on time or download count.
 
 ## Features
 
-- **Anonymous File Sharing**: Share files without the need for user authentication or registration.
-- **AES Encryption**: Files are encrypted using the Advanced Encryption Standard (AES) for added security.
-- **File Expiration**: Files can be set to expire after a certain amount of time or after a specific number of downloads.
-- **Database**: MongoDB is utilized for storing file metadata and other information.
+- **Anonymous File Sharing**: Enables file sharing without requiring user authentication or registration.
+- **AES Encryption**: Employs Advanced Encryption Standard (AES) for secure file storage.
+- **File Expiration**: Allows setting file expiration based on time or download count.
+- **Database**: Utilizes MongoDB for metadata storage and other operational data.
+
+## Tech Stack
+
+- **Backend**: Node.js with Express
+- **Database**: MongoDB
+- **Encryption**: AES
+- **Package Manager**: npm or pnpm
+- **Linting**: ESLint
+- **Version Control**: Git
 
 ## Requirements
 
@@ -17,32 +27,42 @@ A web-based platform that provides anonymous and secure file sharing. It leverag
 ## Installation
 
 1. Clone the repository: `git clone https://github.com/ivanscorral/secure-file-sharing-backend.git`
-2. .git`
-3. Navigate to the project directory: `cd secure-file-sharing-backend`
-4. Install dependencies: `npm install` or `pnpm install`
-5. Configure environment variables: Copy the `.env.example` file to `.env` and fill in the required details.
-6. Start the server: `npm start`
+2. Navigate to the project directory: `cd secure-file-sharing-backend`
+3. Install dependencies: Run `npm install` or `pnpm install`
+4. Configure Environment: Copy `.env.example` to `.env` and fill in the required variables.
+5. Start the server: Execute `npm start`
 
 ## Usage
 
-See the [API documentation](docs/api.md) for details on available endpoints and how to interact with the system.
+Refer to the [API documentation](docs/api.md) for a complete guide on available endpoints and usage instructions.
 
 ## Contributing
 
-Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute to this project.
+Contributions are encouraged! For guidelines on how to contribute, please read [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Documentation
 
-- [File Upload Flow](docs/file-upload-flow.md): Detailed description of the file upload process, including client-server interactions and encryption handling.
+- [File Upload Flow](docs/file-upload-flow.md): In-depth guide covering the file upload process, including client-server interactions and encryption.
+
+## FAQ
+
+- **How do I report a bug?**
+  - Use the GitHub Issues for reporting bugs.
+
+- **Is it possible to extend the file expiration time?**
+  - No, once the file is uploaded, the expiration time cannot be changed.
+
+- **How secure is the file encryption?**
+  - Files are encrypted using AES, which is a secure and widely used encryption standard.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details.
+This project is under the MIT License. See [LICENSE](LICENSE) file for more details.
 
 ## Contact
 
-For questions, issues, or feedback, please [open an issue](https://github.com/ivanscorral/secure-file-sharing/issues) or contact the maintainer directly.
+For inquiries, issues, or feedback, please [open an issue](https://github.com/ivanscorral/secure-file-sharing-backend/issues).
 
 ---
 
-Made with ❤️ by Iván Sánchez Corral. 2023.
+Made with ❤️ by Iván Sánchez Corral, 2023.
