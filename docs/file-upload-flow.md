@@ -36,6 +36,24 @@
 10. **Post-Upload Actions (Optional)**:
     - Additional actions such as logging, notifications, or other integrations may occur after a successful upload.
 
+## File Upload Flowchart
 
-![](https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggVEJcbiAgQVtDbGllbnQgSW5pdGlhdGVzIFVwbG9hZF0gLS0-IEJbUHJlLVVwbG9hZCBQcm9jZXNzaW5nXVxuICBCIC0tPiBDW1NlbmQgVXBsb2FkIFJlcXVlc3RdXG4gIEMgLS0-IERbU2VydmVyIFJlY2VpdmVzIFJlcXVlc3RdXG4gIEQgLS0-IEVbU2VydmVyLVNpZGUgRW5jcnlwdGlvbl1cbiAgRSAtLT4gRltTdG9yZSBGaWxlXVxuICBGIC0tPiBHW0NyZWF0ZSBGaWxlIE1ldGFkYXRhIFJlY29yZF1cbiAgRyAtLT4gSFtIYW5kbGUgUmVzcG9uc2VdXG4gIEggLS0-IElbQ2xpZW50IFJlY2VpdmVzIFJlc3BvbnNlXVxuICBJIC0tPiBKW1Bvc3QtVXBsb2FkIEFjdGlvbnNdXG4iLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9LCJ1cGRhdGVFZGl0b3IiOmZhbHNlLCJhdXRvU3luYyI6dHJ1ZSwidXBkYXRlRGlhZ3JhbSI6ZmFsc2V9)
+The following flowchart illustrates the file upload and encryption process in detail:
 
+![File upload flow diagram](file-upload-flowchart.svg)
+
+## File Upload Flowchart Description
+
+1. **Start**: Initiation of the file upload process.
+2. **Client Upload**: User selects a file and initiates upload via the client interface.
+3. **API Endpoint**: File hits the `POST /api/upload` endpoint.
+4. **Server Reception**: Server receives the file and validates it.
+5. **Temporary Storage**: File is temporarily stored on the server.
+6. **IV Generation**: Generate a random Initialization Vector (IV) for AES encryption.
+7. **AES Encryption**: File is encrypted using AES-256 in CBC mode.
+8. **RSA Encryption**: The AES key is encrypted using RSA-OAEP with SHA-256.
+9. **Encrypted File Storage**: Encrypted file is moved to the `files` directory.
+10. **Metadata Creation**: Create a FileMetadata object.
+11. **Metadata Storage**: FileMetadata object is stored in MongoDB database.
+12. **Confirmation**: Server sends a confirmation response to the client.
+13. **End**: End of the file upload process.
