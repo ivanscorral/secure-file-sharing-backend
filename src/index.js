@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const mongoose = require('mongoose')
+const crypto = require('crypto')
 require('dotenv').config()
 
 // Needed for mocking purposes
@@ -32,28 +33,30 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`)
 })
-async function encryptionDemo () {
-  const stringToEncrypt = 'This is a test string to encrypt%&$asqd1 2312   assa'
+async function encryptionDemo (buffer) {
+  // High-resolution timing
+  const start = process.hrtime.bigint()
 
-  // Await the encryption promise
-  const encryptedCfg = await fileService.encrypt(
-    Buffer.from(stringToEncrypt, 'utf8')
-  )
+  const encryptedCfg = await fileService.encrypt(buffer)
+  const end = process.hrtime.bigint()
+
+  console.log(`Time taken: ${(end - start) / 1000000n} ms to encrypt with size ${buffer.length}`)
   console.log(encryptedCfg)
 
-  // Await the decryption promise
-  const decryptedBuffer = await fileService.decrypt(
-    encryptedCfg.data,
-    encryptedCfg.iv,
-    encryptedCfg.key
-  )
-
-  const decryptedString = decryptedBuffer.toString('utf8')
-  console.log(decryptedString)
+  // Decryption code commented out
 }
 
-// Execute the function
-encryptionDemo().catch((err) => {
+/**
+   * Generates a random buffer of the specified length.
+   *
+   * @param {number} length - The length of the buffer to be generated.
+   * @return {Buffer} - A buffer containing random bytes.
+   */
+function createRandomBuffer (length) {
+  return crypto.randomBytes(length)
+}
+// Execute the function with 1MB of buffer
+encryptionDemo(createRandomBuffer(1024 * 1024 * 500)).catch((err) => {
   console.error('An error occurred:', err)
 })
 
