@@ -1,15 +1,4 @@
-const crypto = require('crypto')
-
-/**
- * @typedef {Object} FileMetadata
- * @property {string} id - Unique identifier for the file.
- * @property {string} filePath - Path to the encrypted file on the server.
- * @property {Buffer} key - Key used for encrypting/decrypting the file.
- * @property {Buffer} iv - Initialization vector used for encrypting/decrypting the file.
- * @property {Date} expirationTime - Time after which the file should be deleted.
- * @property {number} downloadCount - Number of times the file has been downloaded.
- * @property {string} status - File status (e.g., available, expired).
- */
+import crypto from 'crypto'e
 
 /**
  * Service class for handling file-related operations.
@@ -86,4 +75,4 @@ class FileService {
   }
 }
 
-module.exports = FileService
+export default FileService

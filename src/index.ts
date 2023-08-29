@@ -1,15 +1,16 @@
-const express = require('express')
-const cors = require('cors')
-const mongoose = require('mongoose')
-const crypto = require('crypto')
-require('dotenv').config()
+import express from 'express'
+import cors  from 'cors'
+import mongoose from 'mongoose'
+import crypto from 'crypto'
+import dotenv from 'dotenv'
+dotenv.config()
 
 // Needed for mocking purposes
-const FileMetadataRepository = require('./repositories/fileMetadataRepository')
-const FileService = require('./services/fileService')
-
+import FileMetadataRepository from './repositories/fileMetadataRepository'
+import FileService from './services/fileService'
+import { FileMetadataModel } from './models/fileMetadataModel'
 // Create the mock objects to test the fileService
-const fileService = new FileService(new FileMetadataRepository({}))
+const fileService = new FileService(new FileMetadataRepository())
 
 // Constants
 const app = express()
@@ -21,11 +22,11 @@ app.use(express.json())
 app.use(cors())
 
 // Routes
-const fileRoutes = require('./routes/fileRoutes')
+import fileRoutes from './routes/fileRoutes'
 
 app.use('/api/files', fileRoutes)
 
-app.use((err, req, res, next) => {
+app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error(err.stack)
   res.status(500).json({ message: 'Something went wrong!' })
 })
@@ -33,7 +34,8 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`)
 })
-async function encryptionDemo (buffer) {
+
+async function encryptionDemo (buffer: Buffer) {
   // High-resolution timing
   const start = process.hrtime.bigint()
 
@@ -47,14 +49,15 @@ async function encryptionDemo (buffer) {
 }
 
 /**
-   * Generates a random buffer of the specified length.
-   *
-   * @param {number} length - The length of the buffer to be generated.
-   * @return {Buffer} - A buffer containing random bytes.
-   */
-function createRandomBuffer (length) {
+ * Generates a random buffer of the specified length.
+ *
+ * @param {number} length - The length of the buffer to be generated.
+ * @return {Buffer} - A buffer containing random bytes.
+ */
+function createRandomBuffer (length: number): Buffer {
   return crypto.randomBytes(length)
 }
+
 // Execute the function with 1MB of buffer
 encryptionDemo(createRandomBuffer(1024 * 1024 * 500)).catch((err) => {
   console.error('An error occurred:', err)
@@ -63,10 +66,7 @@ encryptionDemo(createRandomBuffer(1024 * 1024 * 500)).catch((err) => {
 if (!process.env.DISABLE_DB) {
   console.log('Connecting to MongoDB...')
   mongoose
-    .connect(MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    })
+    .connect(MONGO_URI)
     .then(() => {
       console.log('Connected to MongoDB')
     })
@@ -74,4 +74,5 @@ if (!process.env.DISABLE_DB) {
       console.error('An error occurred connecting to mongoDB:', err)
     })
 }
-module.exports = app
+
+export default app

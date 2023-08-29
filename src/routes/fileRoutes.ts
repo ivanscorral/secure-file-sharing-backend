@@ -1,6 +1,8 @@
-const express = require('express')
-const router = express.Router()
-const fileController = require('../controllers/fileController')
+import express from 'express'
+import fileController from '../controllers/fileController'
+import { Router } from 'express'
+
+const router: Router = express.Router()
 
 // Upload Endpoint: Handle file upload and encryption
 router.post('/upload', fileController.uploadFile)
@@ -13,4 +15,4 @@ router.get('/status/:id', fileController.getFileStatus)
 
 router.get('/testStoreMetadata', fileController.testStoreMetadata)
 
-module.exports = router
+export default router

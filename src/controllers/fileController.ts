@@ -1,6 +1,7 @@
-const FileMetadataRepository = require('../repositories/fileMetadataRepository')
-const FileService = require('../services/fileService')
-const FileMetadataModel = require('../models/fileMetadataModel')
+import FileMetadataRepository from '../repositories/fileMetadataRepository'
+import FileService from '../services/fileService'
+import FileMetadataModel from '../models/fileMetadataModel'
+import { randomBytes } from 'crypto'
 
 // Upload File: Handles file upload and encryption
 exports.uploadFile = (req, res, next) => {
@@ -22,10 +23,10 @@ exports.getFileStatus = (req, res, next) => {
 
 exports.testStoreMetadata = async (req, res, next) => {
   // initialize repository and service with metadata model
-  const fileMetadataRepository = new FileMetadataRepository(FileMetadataModel)
-  const fileService = new FileService(fileMetadataRepository)
+  const fileMetadataRepository: FileMetadataRepository = new FileMetadataRepository(FileMetadataModel)
+  const fileService: FileService = new FileService(fileMetadataRepository)
   // create a mock metadata object with a unique ID
-  const uniqueId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+  const id = randomBytes(8).toString('hex')
   const metadata = {
     id: uniqueId,
     filePath: 'test.txt',
