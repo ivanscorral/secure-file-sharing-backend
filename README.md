@@ -10,32 +10,62 @@ A web-based platform for anonymous and secure file sharing. This project has rec
 - **TypeScript**: Recently refactored to TypeScript for better type safety and maintainability.
 - **Database**: Utilizes MongoDB for metadata storage and other operational data.
 
-## 🛠 Tech Stack
+## 🛠️ Tech Stack & Tools
 
-- **Backend**: Node.js with Express, recently refactored to TypeScript
-- **Database**: MongoDB
-- **Encryption**: AES
-- **Package Manager**: npm or pnpm
-- **Linting**: ESLint configured for TypeScript
-- **Version Control**: Git
-
-## 📋 Requirements
-
-- Node.js
-- MongoDB
+- **Backend Framework:** Node.js with Express, refactored for TypeScript support to enhance code maintainability and type safety.
+- **Database Engine:** MongoDB for NoSQL storage, optimized for high volume data and JSON-like documents.
+- **Encryption Standard:** Utilizes Advanced Encryption Standard (AES) for robust file security.
+- **Package Management:** Supports both npm and pnpm for dependency management.
+- **Code Quality:** ESLint configured for TypeScript to enforce code quality and style guidelines.
+- **Version Control System:** Git for source code management, including branching and versioning.
+- **Server Environment:** Designed for Node.js 20, ensuring compatibility with the latest ECMAScript features.
 
 ## 🚀 Installation
 
-1. Clone the repository: `git clone https://github.com/ivanscorral/secure-file-sharing-backend.git`
-2. Navigate to the project directory: `cd secure-file-sharing-backend`
-3. Install dependencies: Run `npm install` or `pnpm install`
-4. Configure Environment: Copy `.env.example` to `.env` and fill in the required variables.
-5. Compile TypeScript: Run `tsc`
-6. Start the server: Execute `npm start`
+### Prerequisites
+
+- Node.js (v20.0.0 or higher)
+- MongoDB (v7.0 or higher)
+
+### Steps
+
+1. **Clone the Repository**
+
+   ```bash
+    git clone https://github.com/ivanscorral/secure-file-sharing-backend.git
+    ```
+
+2. **Navigate to Project Directory**
+
+    ```bash
+    cd secure-file-sharing-backend
+    ```
+
+3. **Install Dependencies**
+
+    ```bash
+    npm install
+    ```
+
+4. **Configure Environment Variables**
+    - Copy `.env.example` to `.env`.
+    - Update `.env` with your MongoDB URL, secret keys, or any other required variables.
+
+    ```bash
+    cp .env.example .env
+    ```
+
+5. **Start the Server**
+
+    ```bash
+    npm start
+    ```
+
+    This will compile TypeScript and start the Express server.
 
 ## 📚 Usage
 
-Refer to the updated [API documentation](docs/api.md) for a complete guide on available endpoints and usage instructions, including new TypeScript features.
+Refer to the updated [API documentation](docs/api.md) for a complete guide on available endpoints and usage instructions.
 
 ## 👥 Contributing
 
@@ -62,7 +92,7 @@ This project is under the MIT License. See [LICENSE](LICENSE) file for more deta
 
 ## Reporting issues or feedback
 
-For inquiries, issues, or feedback, please [open an issue](https://github.com/ivanscorral/secure-file-sharing-backend/issues). Make sure to read the  [contributing](#👥-contributing) of this README before opening an issue.
+For inquiries, issues, or feedback, please [open an issue](https://github.com/ivanscorral/secure-file-sharing-backend/issues). Make sure to read the  [contributing section](#-contributing) of this README before opening an issue.
 
 ---
 
