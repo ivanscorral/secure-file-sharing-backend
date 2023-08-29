@@ -1,43 +1,47 @@
-import FileMetadataRepository from '../repositories/fileMetadataRepository'
-import FileService from '../services/fileService'
-import FileMetadataModel from '../models/fileMetadataModel'
-import { randomBytes } from 'crypto'
+import express, { Request, Response, NextFunction } from 'express';
+import FileMetadataRepository from '../repositories/fileMetadataRepository';
+import FileService from '../services/fileService';
+import { randomBytes } from 'crypto';
+
+async function dynamicImport(modulePath: string) {
+  return await import(modulePath);
+}
 
 // Upload File: Handles file upload and encryption
-exports.uploadFile = (req, res, next) => {
+async function uploadFile(req: Request, res: Response, next: NextFunction) {
   // TODO: Implement file upload logic
-  res.status(200).send('File upload endpoint')
+  res.status(200).send('File upload endpoint');
 }
 
 // Download File: Retrieve and decrypt the file
-exports.downloadFile = (req, res, next) => {
+async function downloadFile(req: Request, res: Response, next: NextFunction) {
   // TODO: Implement file download logic
-  res.status(200).send('File download endpoint')
+  res.status(200).send('File download endpoint');
 }
 
 // Get File Status: Check file metadata or status (optional)
-exports.getFileStatus = (req, res, next) => {
+async function getFileStatus(req: Request, res: Response, next: NextFunction) {
   // TODO: Implement file status check logic
-  res.status(200).send('File status endpoint')
+  res.status(200).send('File status endpoint');
 }
 
-exports.testStoreMetadata = async (req, res, next) => {
-  // initialize repository and service with metadata model
-  const fileMetadataRepository: FileMetadataRepository = new FileMetadataRepository(FileMetadataModel)
-  const fileService: FileService = new FileService(fileMetadataRepository)
-  // create a mock metadata object with a unique ID
-  const id = randomBytes(8).toString('hex')
+async function testStoreMetadata(req: Request, res: Response, next: NextFunction) {
+  const fileMetadataRepository = new FileMetadataRepository();
+  const fileService = new FileService(fileMetadataRepository);
+  const nanoid = await dynamicImport('nanoid');
+
   const metadata = {
-    id: uniqueId,
+    id: nanoid(8),  // Assuming nanoid(8) generates a string
     filePath: 'test.txt',
-    encryptionKey: 'encryptionKey',
-    expirationTime: new Date(),
+    key: randomBytes(32),
+    iv: randomBytes(16),
     downloadCount: 0,
-    maxDownloads: 0,
-    createdAt: new Date(),
-    status: 'available'
-  }
-  // store metadata
-  const result = await fileService.createFile(metadata)
-  res.status(200).send('Request result: ' + result)
+    maxDownloadCount: 0,
+    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 6),
+  };
+
+  const result = await fileService.createFileMetadata(metadata);
+  res.status(200).send('Request result: ' + result);
 }
+
+export { uploadFile, downloadFile, getFileStatus, testStoreMetadata }

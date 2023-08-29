@@ -4,21 +4,26 @@
   "description": "The back-end of the Secure File Sharing Platform handles file upload, encryption, storage, decryption, download, and expiration. It provides a secure and efficient means for temporary and anonymous file sharing.",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.ts",
-    "start-ts": "npx ts-node src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node .build/index.js",
+    "clean": "rimraf .build",
+    "build": "tsc",
+    "prestart": "npm run build",
+    "lint": "eslint 'src/**/*.ts'",
+    "dev": "ts-node src/"
   },
   "keywords": [
     "secure"
   ],
-  "author": "Ivan Sanchez Corral",
+    "author": "Ivan Sanchez Corral",
   "license": "MIT",
   "dependencies": {
     "@typegoose/typegoose": "^11.4.1",
+    "@types/dotenv": "^8.2.0",
+    "@types/nanoid": "^3.0.0",
+    "@types/typescript": "^2.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "mongoose": "^7.4.4",
     "nanoid": "^4.0.2",
     "prettier": "^3.0.2"
   },
@@ -33,6 +38,7 @@
     "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-n": "^16.0.2",
     "eslint-plugin-promise": "^6.1.1",
+    "mongoose": "^7.4.5",
     "typescript": "^5.2.2"
   }
 }

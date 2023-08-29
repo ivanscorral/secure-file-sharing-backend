@@ -1,14 +1,15 @@
-import express from 'express'
+import express, { NextFunction, Request, Response } from 'express';
 import cors  from 'cors'
 import mongoose from 'mongoose'
-import crypto from 'crypto'
-import dotenv from 'dotenv'
-dotenv.config()
+import { randomBytes } from 'crypto'
+
+
+require('dotenv').config({ path: __dirname+'/.env' });
 
 // Needed for mocking purposes
 import FileMetadataRepository from './repositories/fileMetadataRepository'
 import FileService from './services/fileService'
-import { FileMetadataModel } from './models/fileMetadataModel'
+import { FileMetadata } from './models/fileMetadata'
 // Create the mock objects to test the fileService
 const fileService = new FileService(new FileMetadataRepository())
 
@@ -26,7 +27,7 @@ import fileRoutes from './routes/fileRoutes'
 
 app.use('/api/files', fileRoutes)
 
-app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack)
   res.status(500).json({ message: 'Something went wrong!' })
 })
@@ -55,7 +56,7 @@ async function encryptionDemo (buffer: Buffer) {
  * @return {Buffer} - A buffer containing random bytes.
  */
 function createRandomBuffer (length: number): Buffer {
-  return crypto.randomBytes(length)
+  return randomBytes(length)
 }
 
 // Execute the function with 1MB of buffer
