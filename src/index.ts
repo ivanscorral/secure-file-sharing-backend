@@ -2,9 +2,10 @@ import express, { NextFunction, Request, Response } from 'express';
 import cors  from 'cors'
 import mongoose from 'mongoose'
 import { randomBytes } from 'crypto'
+import { CryptoService, getAESAlgorithms, CryptoConfig } from './services/cryptoService'
 
 
-require('dotenv').config({ path: __dirname+'/.env' });
+require('dotenv').config();
 
 // Needed for mocking purposes
 import FileMetadataRepository from './repositories/fileMetadataRepository'
@@ -63,6 +64,10 @@ function createRandomBuffer (length: number): Buffer {
 encryptionDemo(createRandomBuffer(1024 * 1024 * 500)).catch((err) => {
   console.error('An error occurred:', err)
 })
+
+console.log('Available algorithms:', getAESAlgorithms())
+
+console.log(process.env)
 
 if (!process.env.DISABLE_DB) {
   console.log('Connecting to MongoDB...')

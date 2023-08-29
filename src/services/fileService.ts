@@ -56,7 +56,7 @@ class FileService {
   async encrypt (data: Buffer): Promise<Object> {
     const iv = randomBytes(16)
     const key = randomBytes(32)
-    const cipher = createCipheriv('aes-256-cbc', key, iv)
+    const cipher = createCipheriv('aes-256-ctr', key, iv)
     const encrypted = Buffer.concat([cipher.update(data), cipher.final()])
     return { iv, key, data: encrypted }
   }
