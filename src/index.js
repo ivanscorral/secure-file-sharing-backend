@@ -29,8 +29,28 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`)
 })
-const stringToEncrypt = 'This is a test string to encrypt%&$asqd1 2312   assa'
-console.log(fileService.encrypt(Buffer.from(stringToEncrypt)))
+async function encryptionDemo () {
+  const stringToEncrypt = 'This is a test string to encrypt%&$asqd1 2312   assa'
+
+  // Await the encryption promise
+  const encryptedCfg = await fileService.encrypt(Buffer.from(stringToEncrypt, 'utf8'))
+  console.log(encryptedCfg)
+
+  // Await the decryption promise
+  const decryptedBuffer = await fileService.decrypt(
+    encryptedCfg.data,
+    encryptedCfg.iv,
+    encryptedCfg.key
+  )
+
+  const decryptedString = decryptedBuffer.toString('utf8')
+  console.log(decryptedString)
+}
+
+// Execute the function
+encryptionDemo().catch((err) => {
+  console.error('An error occurred:', err)
+})
 
 mongoose.connect(MONGO_URI,
   {

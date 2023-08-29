@@ -4,8 +4,8 @@ const crypto = require('crypto')
  * @typedef {Object} FileMetadata
  * @property {string} id - Unique identifier for the file.
  * @property {string} filePath - Path to the encrypted file on the server.
- * @property {string} encryptionKey - Key used for encrypting/decrypting the file.
- * @property {string} iv - Initialization vector used for encrypting/decrypting the file.
+ * @property {Buffer} key - Key used for encrypting/decrypting the file.
+ * @property {Buffer} iv - Initialization vector used for encrypting/decrypting the file.
  * @property {Date} expirationTime - Time after which the file should be deleted.
  * @property {number} downloadCount - Number of times the file has been downloaded.
  * @property {string} status - File status (e.g., available, expired).
@@ -57,29 +57,32 @@ class FileService {
   }
 
   /**
-   * Encrypt a file.
+   * Encrypts a data buffer using AES-256 in CBC mode.
    * @param {Buffer} data - The data buffer to encrypt.
-   * @return {Object} The iv, key, and encrypted data in hexadecimal as a JSON object.
+   * @returns {Promise<Object>} The iv, key, and encrypted buffers as a JSON object.
    */
   async encrypt (data) {
     const iv = crypto.randomBytes(16)
     const key = crypto.randomBytes(32)
     const cipher = crypto.createCipheriv('aes-256-cbc', key, iv)
     const encrypted = Buffer.concat([cipher.update(data), cipher.final()])
-
-    return {
-      iv: iv.toString('hex'),
-      key: key.toString('hex'),
-      encryptedData: encrypted
-    }
+    return { iv, key, data: encrypted }
   }
 
   /**
-     * Decrypt a file.
-     * @param {Object} file - The file object.
-     */
-  async decryptFile (file) {
-    // TODO Implement file decryption logic
+  * Decrypt a data buffer using AES-256 in CBC mode.
+  * @param {Buffer} data - The data buffer to decrypt.
+  * @param {Buffer} iv - The initialization vector.
+  * @param {Buffer} key - The encryption key.
+  * @returns {Promise<Buffer>} - The decrypted data.
+  */
+  async decrypt (data, iv, key) {
+    const crypto = require('crypto')
+    const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv)
+    let decryptedData = decipher.update(data)
+    decryptedData = Buffer.concat([decryptedData, decipher.final()])
+
+    return decryptedData
   }
 }
 
