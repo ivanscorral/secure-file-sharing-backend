@@ -1,16 +1,19 @@
 const express = require('express')
 const cors = require('cors')
 const mongoose = require('mongoose')
+require('dotenv').config()
+
+// Needed for mocking purposes
 const FileMetadataRepository = require('./repositories/fileMetadataRepository')
 const FileService = require('./services/fileService')
-// Create the necessary objects to test the fileService
 
-const fileService = new FileService(new FileMetadataRepository())
+// Create the mock objects to test the fileService
+const fileService = new FileService(new FileMetadataRepository({}))
 
 // Constants
 const app = express()
 const PORT = process.env.PORT || 3000
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/sfs-fileMetadata'
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/secure-file-sharing'
 
 // Middleware
 app.use(express.json())
@@ -33,7 +36,9 @@ async function encryptionDemo () {
   const stringToEncrypt = 'This is a test string to encrypt%&$asqd1 2312   assa'
 
   // Await the encryption promise
-  const encryptedCfg = await fileService.encrypt(Buffer.from(stringToEncrypt, 'utf8'))
+  const encryptedCfg = await fileService.encrypt(
+    Buffer.from(stringToEncrypt, 'utf8')
+  )
   console.log(encryptedCfg)
 
   // Await the decryption promise
@@ -52,11 +57,18 @@ encryptionDemo().catch((err) => {
   console.error('An error occurred:', err)
 })
 
-mongoose.connect(MONGO_URI,
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  }
-)
-
+if (!process.env.DISABLE_DB) {
+  console.log('Connecting to MongoDB...')
+  mongoose
+    .connect(MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    })
+    .then(() => {
+      console.log('Connected to MongoDB')
+    })
+    .catch((err) => {
+      console.error('An error occurred connecting to mongoDB:', err)
+    })
+}
 module.exports = app
