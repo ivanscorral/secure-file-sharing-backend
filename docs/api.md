@@ -8,7 +8,7 @@ The API uses a token-based authentication system. The token is passed in the `Au
 
 ## Endpoints
 
-### `GET /api/files/upload`
+### `POST    /api/files/upload`
 
 This endpoint is used to upload a file to the server. The file is uploaded as a multipart form. The file is encrypted using AES-256 in CBC mode with a random IV. The key is encrypted using RSA-OAEP with SHA-256 and a random salt. The salt is encrypted using RSA-OAEP with SHA-256 and a random salt. The encrypted file, encrypted key, and encrypted salt are all uploaded as part of the multipart form. The encrypted file is stored in the `files` directory. The encrypted key and encrypted salt are stored in the FileMetadata object in the database.
 

@@ -4,6 +4,7 @@ const fileMetadataSchema = new mongoose.Schema({
   id: { type: String, unique: true },
   filePath: String,
   encryptionKey: String,
+  iv: String,
   expirationTime: Date,
   downloadCount: Number,
   maxDownloads: { type: Number, required: false },

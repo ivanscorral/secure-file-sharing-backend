@@ -1,6 +1,11 @@
 const express = require('express')
 const cors = require('cors')
 const mongoose = require('mongoose')
+const FileMetadataRepository = require('./repositories/fileMetadataRepository')
+const FileService = require('./services/fileService')
+// Create the necessary objects to test the fileService
+
+const fileService = new FileService(new FileMetadataRepository())
 
 // Constants
 const app = express()
@@ -24,6 +29,8 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`)
 })
+const stringToEncrypt = 'This is a test string to encrypt%&$asqd1 2312   assa'
+console.log(fileService.encrypt(Buffer.from(stringToEncrypt)))
 
 mongoose.connect(MONGO_URI,
   {
