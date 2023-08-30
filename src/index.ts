@@ -29,7 +29,7 @@ function createRandomBuffer (length: number): Buffer {
 }
 
 // Execute the function with 500MB of random data.
-encryptionDemo(createRandomBuffer(1024 * 1024 * 500)).catch((err) => {
+encryptionDemo(createRandomBuffer(1024 * 1024 * 10)).catch((err) => {
   console.error('An error occurred:', err)
 })
 // Middleware

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { randomBytes, createCipheriv, createDecipheriv } from 'crypto'
 import FileMetadataRepository from '../repositories/fileMetadataRepository'
 import { FileMetadata } from '../models/fileMetadata'
