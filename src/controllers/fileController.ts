@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
-import FileMetadataRepository from '../repositories/fileMetadataRepository'
 import FileService from '../services/fileService'
-import { randomBytes } from 'crypto'
+import { CryptoService } from '../services/cryptoService'
+import { container } from '../inversify.config'
 
 async function dynamicImport (modulePath: string) {
   return await import(modulePath)
@@ -29,23 +29,23 @@ async function getFileStatus (req: Request, res: Response, next: NextFunction) {
 }
 
 async function testStoreMetadata (req: Request, res: Response, next: NextFunction) {
-  const fileMetadataRepository = new FileMetadataRepository()
-  const fileService = new FileService(fileMetadataRepository)
+  // const fileService = container.get<FileService>('FileService')
+  const cryptoService = container.get<CryptoService>('CryptoService')
   const nanoid = await dynamicImport('nanoid')
-
+  cryptoService.setConfig({ key: Buffer.alloc(32), iv: Buffer.alloc(16), algorithm: 'aes-256-ctr' })
+  console.log(cryptoService.config)
   const metadata = {
-    id: nanoid(8), // Assuming nanoid(8) generates a string
+    id: nanoid.nanoid(10),
     filePath: 'test.txt',
-    key: randomBytes(32),
-    iv: randomBytes(16),
+    key: cryptoService.config.key,
+    iv: cryptoService.config.iv,
     downloadCount: 0,
     maxDownloadCount: 0,
     expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 6)
   }
 
-  const result = await fileService.createFileMetadata(metadata)
-  res.status(200).send('Request result: ' + result)
-  next()
+  // const result = await fileService.createFileMetadata(metadata)
+  res.status(200).send('Generated metadata: ' + JSON.stringify(metadata))
 }
 
 export { uploadFile, downloadFile, getFileStatus, testStoreMetadata }

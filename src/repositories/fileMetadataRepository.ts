@@ -1,5 +1,7 @@
+import { injectable } from 'inversify'
 import { FileMetadata, FileMetadataModel } from '../models/fileMetadata'
 
+@injectable()
 class FileMetadataRepository {
   async create (fileMetadata: FileMetadata): Promise<FileMetadata> {
     const newFileMetadata = new FileMetadataModel(fileMetadata) // Using FileMetadataModel here

@@ -2,16 +2,22 @@
 import { randomBytes, createCipheriv, createDecipheriv } from 'crypto'
 import FileMetadataRepository from '../repositories/fileMetadataRepository'
 import { FileMetadata } from '../models/fileMetadata'
+import { CryptoService, CryptoConfig } from './cryptoService'
+import { container } from '../inversify.config'
+import { injectable } from 'inversify'
 /**
  * Service class for handling file-related operations.
  */
+@injectable()
 class FileService {
   fileMetadataRepository: FileMetadataRepository
+  cryptoService: CryptoService
   /**
      * @param {Object} fileMetadataRepository - The repository for interacting with file metadata.
      */
-  constructor (fileMetadataRepository: FileMetadataRepository) {
-    this.fileMetadataRepository = fileMetadataRepository
+  constructor () {
+    this.fileMetadataRepository = container.get<FileMetadataRepository>('FileMetadataRepository')
+    this.cryptoService = container.get<CryptoService>('CryptoService')
   }
 
   /**
@@ -49,7 +55,7 @@ class FileService {
   }
 
   /**
-   * Encrypts a data buffer using AES-256 in CBC mode.
+   * Encrypts a data buffer using AES-256 in CTR mode.
    * @param {Buffer} data - The data buffer to encrypt.
    * @returns {Promise<Object>} The iv, key, and encrypted buffers as a JSON object.
    */

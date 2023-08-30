@@ -1,19 +1,21 @@
+import 'reflect-metadata'
 import express, { Request, Response } from 'express'
 import cors from 'cors'
 import mongoose from 'mongoose'
 import { randomBytes } from 'crypto'
 import fileRouter from './routes/fileRoutes'
-
-// Needed for mocking purposes
-import FileMetadataRepository from './repositories/fileMetadataRepository'
+// import { CryptoService } from './services/cryptoService'
+// import FileMetadataRepository from './repositories/fileMetadataRepository'
 import FileService from './services/fileService'
+import { container } from './inversify.config'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config()
-// Create the mock objects to test the fileService
-const fileService = new FileService(new FileMetadataRepository())
 
-// Constants
+const fileService = container.get<FileService>('FileService')
+/* const cryptoService = container.get<CryptoService>('CryptoService')
+const fileMetadataRepository = container.get<FileMetadataRepository>('FileMetadataRepository')
+ */
 const app = express()
 const PORT = process.env.PORT || 3000
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/secure-file-sharing'

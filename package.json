@@ -14,7 +14,7 @@
   "keywords": [
     "secure"
   ],
-    "author": "Ivan Sanchez Corral",
+  "author": "Ivan Sanchez Corral",
   "license": "MIT",
   "dependencies": {
     "@typegoose/typegoose": "^11.4.1",
@@ -24,8 +24,10 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "inversify": "^6.0.1",
     "nanoid": "^4.0.2",
-    "prettier": "^3.0.2"
+    "prettier": "^3.0.2",
+    "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "@types/cors": "^2.8.13",

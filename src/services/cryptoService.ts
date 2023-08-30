@@ -1,4 +1,5 @@
 import { createCipheriv, getCiphers } from 'crypto'
+import { injectable } from 'inversify'
 
 interface CryptoConfig {
   key: Buffer
@@ -6,9 +7,43 @@ interface CryptoConfig {
   algorithm: string
 }
 
+@injectable()
 class CryptoService {
-  constructor (private config: CryptoConfig = { key: Buffer.alloc(0), iv: Buffer.alloc(0), algorithm: 'aes-256-ctr' }) {
-    this.config = config
+  private _config!: CryptoConfig
+
+  constructor (config: CryptoConfig = { key: Buffer.alloc(32), iv: Buffer.alloc(16), algorithm: 'aes-256-ctr' }) {
+    this.setConfig(config)
+  }
+
+  private validateKeyAndIvLengths (algorithm: string, key: Buffer, iv: Buffer) {
+    const match = algorithm.match(/aes-(128|192|256)-/)
+    if (!match) {
+      throw new Error(`Unknown algorithm: ${algorithm}`)
+    }
+
+    const keyLength = parseInt(match[1], 10) / 8 // Convert bits to bytes
+    const ivLength = 16 // 128 bits or 16 bytes for AES algorithms
+
+    if (key.length !== keyLength) {
+      throw new Error(`Key length must be ${keyLength} bytes for ${algorithm}`)
+    }
+
+    if (iv.length !== ivLength) {
+      throw new Error(`IV length must be ${ivLength} bytes for ${algorithm}`)
+    }
+  }
+
+  set config (newConfig: CryptoConfig) {
+    this.validateKeyAndIvLengths(newConfig.algorithm, newConfig.key, newConfig.iv)
+    this._config = newConfig
+  }
+
+  get config () {
+    return this._config
+  }
+
+  setConfig (newConfig: CryptoConfig) {
+    this.config = newConfig
   }
 
   async encrypt (data: Buffer): Promise<Buffer> {
@@ -17,10 +52,10 @@ class CryptoService {
   }
 }
 
-export function getAESAlgorithms (): string[] {
+function getAESAlgorithms (): string[] {
   // return algorithms containing aes
   const allAlgorithms = getCiphers()
   return allAlgorithms.filter(algorithm => algorithm.includes('aes'))
 }
 
-export { CryptoService, CryptoConfig }
+export { CryptoService, CryptoConfig, getAESAlgorithms }
