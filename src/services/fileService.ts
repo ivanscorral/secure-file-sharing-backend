@@ -5,6 +5,8 @@ import { FileMetadata } from '../models/fileMetadata'
 import { CryptoService, CryptoConfig } from './cryptoService'
 import { container } from '../inversify.config'
 import { injectable } from 'inversify'
+import path from 'path'
+import { promises as fs } from 'fs'
 
 @injectable()
 class FileService {
@@ -19,6 +21,27 @@ class FileService {
   async createFileMetadata (metadata: FileMetadata): Promise<FileMetadata> {
     // TODO: Implement actual file creation
     return await this._fileMetadataRepository.create(metadata)
+  }
+
+  async writeFile (filePath: string, data: Buffer): Promise<void> {
+    try {
+      const basePath: string = path.resolve(filePath)
+      await fs.writeFile(basePath, data)
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
+  }
+
+  async readFile (filePath: string): Promise<Buffer> {
+    try {
+      const basePath: string = path.resolve(filePath)
+      const dataBuffer: Buffer = await fs.readFile(basePath)
+      return dataBuffer
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
   }
 
   async deleteFile (id: string): Promise<void> {

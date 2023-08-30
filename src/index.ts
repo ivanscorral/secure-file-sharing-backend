@@ -6,7 +6,7 @@ import cors from 'cors'
 import mongoose from 'mongoose'
 import { randomBytes } from 'crypto'
 import { container } from './inversify.config'
-
+import path from 'path'
 // Import local modules
 import fileRouter from './routes/fileRoutes'
 import FileService from './services/fileService'
@@ -21,6 +21,7 @@ const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/secure-fil
 
 // Initialize services and dependency injection
 const fileService = container.get<FileService>('FileService')
+const cryptoService = container.get<CryptoService>('CryptoService')
 
 // Setup Express
 const app = express()
@@ -45,22 +46,6 @@ if (!process.env.DISABLE_DB) {
   connectToDatabase(MONGO_URI)
 }
 
-// Utility Functions
-
-async function encryptionDemo (buffer: Buffer): Promise<void> {
-  const start = process.hrtime.bigint()
-  const cryptoService = container.get<CryptoService>('CryptoService')
-  cryptoService.config.iv = randomBytes(16)
-  const encryptedCfg = await cryptoService.encrypt(buffer)
-  const end = process.hrtime.bigint()
-  console.log(`Time taken: ${(end - start) / 1000000n} ms to encrypt with size ${buffer.length}`)
-  console.log(encryptedCfg)
-}
-
-function createRandomBuffer (length: number): Buffer {
-  return Buffer.allocUnsafe(length).fill(0)
-}
-
 async function connectToDatabase (uri: string): Promise<void> {
   try {
     await mongoose.connect(uri)
@@ -70,7 +55,15 @@ async function connectToDatabase (uri: string): Promise<void> {
   }
 }
 
+async function fileDemo (): Promise<void> {
+  const fileData = await fileService.readFile('./README.md')
+  console.log(fileData)
+  const encryptedData = await cryptoService.encrypt(fileData)
+  console.log(encryptedData)
+}
+
 // Execution
-encryptionDemo(createRandomBuffer(1024 * 1024 * 512)).catch((err) => {
+
+fileDemo().catch((err) => {
   console.error('An error occurred:', err)
 })
