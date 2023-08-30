@@ -5,82 +5,47 @@ import { FileMetadata } from '../models/fileMetadata'
 import { CryptoService, CryptoConfig } from './cryptoService'
 import { container } from '../inversify.config'
 import { injectable } from 'inversify'
-/**
- * Service class for handling file-related operations.
- */
+
 @injectable()
 class FileService {
-  fileMetadataRepository: FileMetadataRepository
-  cryptoService: CryptoService
-  /**
-     * @param {Object} fileMetadataRepository - The repository for interacting with file metadata.
-     */
+  private _fileMetadataRepository: FileMetadataRepository
+  private _cryptoService: CryptoService
+
   constructor () {
-    this.fileMetadataRepository = container.get<FileMetadataRepository>('FileMetadataRepository')
-    this.cryptoService = container.get<CryptoService>('CryptoService')
+    this._fileMetadataRepository = container.get<FileMetadataRepository>('FileMetadataRepository')
+    this._cryptoService = container.get<CryptoService>('CryptoService')
   }
 
-  /**
-     * Create a new file record.
-     * @param {FileMetadata} metadata - The file metadata object.
-     */
   async createFileMetadata (metadata: FileMetadata): Promise<FileMetadata> {
     // TODO: Implement actual file creation
-    const created: FileMetadata = await this.fileMetadataRepository.create(metadata)
-    return created
+    return await this._fileMetadataRepository.create(metadata)
   }
 
-  /**
-     * Delete a file record by ID.
-     * @param {string} id - The file ID.
-     */
   async deleteFile (id: string): Promise<void> {
     // TODO Implement file deletion logic
   }
 
-  /**
-     * Increment the download count of a file.
-     * @param {string} id - The file ID.
-     */
   async incrementDownloadCount (id: string): Promise<void> {
     // TODO Implement file download logic
   }
 
-  /**
-     * Handle file expiration logic.
-     * @param {string} id - The file ID.
-     */
   async handleFileExpiration (id: string): Promise<void> {
     // TODO Implement file expiration logic
   }
 
-  /**
-   * Encrypts a data buffer using AES-256 in CTR mode.
-   * @param {Buffer} data - The data buffer to encrypt.
-   * @returns {Promise<Object>} The iv, key, and encrypted buffers as a JSON object.
-   */
-  async encrypt (data: Buffer): Promise<object> {
-    const iv = randomBytes(16)
-    const key = randomBytes(32)
-    const cipher = createCipheriv('aes-256-ctr', key, iv)
-    const encrypted = Buffer.concat([cipher.update(data), cipher.final()])
-    return { iv, key, data: encrypted }
+  async uploadFile (file: any): Promise<FileMetadata | null> {
+    // TODO: Implement actual file upload
+    return null
   }
 
-  /**
-  * Decrypt a data buffer using AES-256 in CBC mode.
-  * @param {Buffer} data - The data buffer to decrypt.
-  * @param {Buffer} iv - The initialization vector.
-  * @param {Buffer} key - The encryption key.
-  * @returns {Promise<Buffer>} - The decrypted data.
-  */
-  async decrypt (data: Buffer, iv: Buffer, key: Buffer): Promise<Buffer> {
-    const decipher = createDecipheriv('aes-256-cbc', key, iv)
-    let decryptedData = decipher.update(data)
-    decryptedData = Buffer.concat([decryptedData, decipher.final()])
+  async downloadFile (id: string): Promise<Buffer | null> {
+    // TODO: Implement actual file download
+    return null
+  }
 
-    return decryptedData
+  async getFileStatus (id: string): Promise<FileMetadata | null> {
+    // TODO: Implement actual file status
+    return null
   }
 }
-
 export default FileService

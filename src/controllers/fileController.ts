@@ -1,39 +1,31 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Request, Response, NextFunction } from 'express'
 import FileService from '../services/fileService'
 import { CryptoService } from '../services/cryptoService'
 import { container } from '../inversify.config'
 
-async function dynamicImport (modulePath: string) {
-  return await import(modulePath)
-}
+const fileService = container.get<FileService>('FileService')
+const cryptoService = container.get<CryptoService>('CryptoService')
 
-// Upload File: Handles file upload and encryption
 async function uploadFile (req: Request, res: Response, next: NextFunction) {
-  // TODO: Implement file upload logic
-  res.status(200).send('File upload endpoint')
-  next()
+  const result = await fileService.uploadFile(req.file) // Implement this in FileService
+  res.status(200).json(result)
 }
 
-// Download File: Retrieve and decrypt the file
 async function downloadFile (req: Request, res: Response, next: NextFunction) {
-  // TODO: Implement file download logic
-  res.status(200).send('File download endpoint')
-  next()
+  const file = await fileService.downloadFile(req.params.id) // Implement this in FileService
+  res.status(200).send(file)
 }
 
-// Get File Status: Check file metadata or status (optional)
 async function getFileStatus (req: Request, res: Response, next: NextFunction) {
-  // TODO: Implement file status check logic
-  res.status(200).send('File status endpoint')
-  next()
+  const status = await fileService.getFileStatus(req.params.id) // Implement this in FileService
+  res.status(200).json(status)
 }
 
 async function testStoreMetadata (req: Request, res: Response, next: NextFunction) {
-  // const fileService = container.get<FileService>('FileService')
-  const cryptoService = container.get<CryptoService>('CryptoService')
-  const nanoid = await dynamicImport('nanoid')
+  const nanoid = await import('nanoid')
   cryptoService.setConfig({ key: Buffer.alloc(32), iv: Buffer.alloc(16), algorithm: 'aes-256-ctr' })
-  console.log(cryptoService.config)
+
   const metadata = {
     id: nanoid.nanoid(10),
     filePath: 'test.txt',
@@ -44,8 +36,8 @@ async function testStoreMetadata (req: Request, res: Response, next: NextFunctio
     expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 6)
   }
 
-  // const result = await fileService.createFileMetadata(metadata)
-  res.status(200).send('Generated metadata: ' + JSON.stringify(metadata))
+  const result = await fileService.createFileMetadata(metadata) // Implement this in FileService
+  res.status(200).json(result)
 }
 
 export { uploadFile, downloadFile, getFileStatus, testStoreMetadata }

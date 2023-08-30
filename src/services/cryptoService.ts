@@ -33,6 +33,28 @@ class CryptoService {
     }
   }
 
+  setIV (iv: Buffer) {
+    this.validateKeyAndIvLengths(this._config.algorithm, this._config.key, iv)
+    this._config.iv = iv
+  }
+
+  setKey (key: Buffer) {
+    this.validateKeyAndIvLengths(this._config.algorithm, key, this._config.iv)
+    this._config.key = key
+  }
+
+  setAlgorithm (algorithm: string) {
+    this._config.algorithm = algorithm
+  }
+
+  set algorithm (algorithm: string) {
+    this.validateKeyAndIvLengths(algorithm, this._config.key, this._config.iv)
+  }
+
+  get algorithm () {
+    return this._config.algorithm
+  }
+
   set config (newConfig: CryptoConfig) {
     this.validateKeyAndIvLengths(newConfig.algorithm, newConfig.key, newConfig.iv)
     this._config = newConfig
