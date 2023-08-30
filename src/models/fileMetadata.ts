@@ -1,4 +1,4 @@
-import { prop, modelOptions, pre, getModelForClass } from '@typegoose/typegoose';
+import { prop, modelOptions, pre, getModelForClass } from '@typegoose/typegoose'
 
 interface FileMetadataProps {
   id: string;
@@ -12,52 +12,53 @@ interface FileMetadataProps {
 
 // Generate a random string
 const generateRandomString = (length: number): string => {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  let result = ''
   for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
+    result += characters.charAt(Math.floor(Math.random() * characters.length))
   }
-  return result;
-};
+  return result
+}
 
 // Hooks
-@pre<FileMetadata>('save', function(next) {
+// eslint-disable-next-line no-use-before-define
+@pre<FileMetadata>('save', function (next) {
   if (this.isNew) {
     if (!this.expiresAt) {
-      this.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24);
+      this.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24)
     }
     if (!this.id) {
-      this.id = generateRandomString(10);
+      this.id = generateRandomString(10)
     }
   }
-  next();
+  next()
 })
 
 @modelOptions({ schemaOptions: { timestamps: true } })
 class FileMetadata implements FileMetadataProps {
   @prop({ required: false, unique: true, index: true, default: () => generateRandomString(10) })
-  public id!: string;
+  public id!: string
 
   @prop({ required: true })
-  public filePath!: string;
+  public filePath!: string
 
   @prop({ required: true })
-  public key!: Buffer;
+  public key!: Buffer
 
   @prop({ required: true })
-  public iv!: Buffer;
+  public iv!: Buffer
 
   @prop({ required: true })
-  public expiresAt!: Date;
+  public expiresAt!: Date
 
   @prop({ default: 0 })
-  public downloadCount?: number;
+  public downloadCount?: number
 
   @prop({ default: 0 })
-  public maxDownloadCount!: number;
+  public maxDownloadCount!: number
 }
 
-const FileMetadataModel = getModelForClass(FileMetadata);
+const FileMetadataModel = getModelForClass(FileMetadata)
 
 export { FileMetadataModel }
 export { FileMetadata }

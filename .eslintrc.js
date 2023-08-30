@@ -6,32 +6,40 @@ module.exports = {
   },
   extends: [
     'standard',
-    'plugin:@typescript-eslint/recommended', // TypeScript rules
+    'plugin:@typescript-eslint/recommended' // TypeScript rules
   ],
   parser: '@typescript-eslint/parser', // Specifies the ESLint parser for TypeScript
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
-    project: './tsconfig.json', // Specify it only if you need @typescript-eslint/parser
+    project: './tsconfig.json' // Specify it only if you need @typescript-eslint/parser
   },
   plugins: [
-    '@typescript-eslint', // Use TypeScript-specific linting rules
+    '@typescript-eslint' // Use TypeScript-specific linting rules
   ],
   overrides: [
     {
-      env: {
-        node: true,
-      },
       files: [
-        '.eslintrc.{js,cjs}',
+        '.eslintrc.{js,cjs}'
       ],
       parserOptions: {
-        sourceType: 'script',
-      },
+        project: './tsconfig.json'
+      }
     },
+    {
+      env: {
+        node: true
+      },
+      files: [
+        '.eslintrc.{js,cjs}'
+      ],
+      parserOptions: {
+        sourceType: 'script'
+      }
+    }
   ],
   rules: {
     // Place your custom rules here
-    '@typescript-eslint/explicit-module-boundary-types': 'off', // Example rule, adjust as needed
-  },
-};
+    '@typescript-eslint/no-explicit-any': 'off' // Example rule, adjust as needed
+  }
+}

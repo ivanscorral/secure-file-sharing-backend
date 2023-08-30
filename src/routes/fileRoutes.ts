@@ -1,18 +1,17 @@
-import express from 'express'
-import { uploadFile, downloadFile, getFileStatus, testStoreMetadata } from '../controllers/fileController'
 import { Router } from 'express'
+import { uploadFile, downloadFile, getFileStatus, testStoreMetadata } from '../controllers/fileController'
 
-const router: Router = express.Router()
+const fileRouter: Router = Router()
 
 // Upload Endpoint: Handle file upload and encryption
-router.post('/upload', uploadFile)
+fileRouter.post('/upload', uploadFile)
 
 // Download Endpoint: Retrieve and decrypt the file
-router.get('/download/:id', downloadFile)
+fileRouter.get('/download/:id', downloadFile)
 
 // Optional: Status Endpoint to check file metadata or status
-router.get('/status/:id', getFileStatus)
+fileRouter.get('/status/:id', getFileStatus)
 
-router.get('/testStoreMetadata', testStoreMetadata)
+fileRouter.get('/testStoreMetadata', testStoreMetadata)
 
-export default router
+export default fileRouter

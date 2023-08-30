@@ -1,11 +1,11 @@
 import { randomBytes, createCipheriv, createDecipheriv } from 'crypto'
 import FileMetadataRepository from '../repositories/fileMetadataRepository'
-import { FileMetadata, FileMetadataModel } from '../models/fileMetadata'
+import { FileMetadata } from '../models/fileMetadata'
 /**
  * Service class for handling file-related operations.
  */
 class FileService {
-  fileMetadataRepository: FileMetadataRepository;
+  fileMetadataRepository: FileMetadataRepository
   /**
      * @param {Object} fileMetadataRepository - The repository for interacting with file metadata.
      */
@@ -17,11 +17,10 @@ class FileService {
      * Create a new file record.
      * @param {FileMetadata} metadata - The file metadata object.
      */
-  async createFileMetadata(metadata: FileMetadata): Promise<FileMetadata> {
+  async createFileMetadata (metadata: FileMetadata): Promise<FileMetadata> {
     // TODO: Implement actual file creation
-    const created: FileMetadata = await this.fileMetadataRepository.create(metadata);
-    return created;
-
+    const created: FileMetadata = await this.fileMetadataRepository.create(metadata)
+    return created
   }
 
   /**
@@ -53,7 +52,7 @@ class FileService {
    * @param {Buffer} data - The data buffer to encrypt.
    * @returns {Promise<Object>} The iv, key, and encrypted buffers as a JSON object.
    */
-  async encrypt (data: Buffer): Promise<Object> {
+  async encrypt (data: Buffer): Promise<object> {
     const iv = randomBytes(16)
     const key = randomBytes(32)
     const cipher = createCipheriv('aes-256-ctr', key, iv)
@@ -69,7 +68,6 @@ class FileService {
   * @returns {Promise<Buffer>} - The decrypted data.
   */
   async decrypt (data: Buffer, iv: Buffer, key: Buffer): Promise<Buffer> {
-    const crypto = require('crypto')
     const decipher = createDecipheriv('aes-256-cbc', key, iv)
     let decryptedData = decipher.update(data)
     decryptedData = Buffer.concat([decryptedData, decipher.final()])
