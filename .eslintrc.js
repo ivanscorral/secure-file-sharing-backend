@@ -9,7 +9,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended'
   ],
   parser: '@typescript-eslint/parser',
-  parserOptions: {
+  parserOptions: {g
     ecmaVersion: 'latest',
     sourceType: 'module',
     project: './tsconfig.json'
@@ -38,6 +38,8 @@ module.exports = {
   rules: {
     '@typescript-eslint/no-explicit-any': 'off',
     'unused-imports/no-unused-imports': 'error',
-    '@typescript-eslint/no-unused-vars': 'warn'
+    '@typescript-eslint/no-unused-vars': 'warn',
+    'no-use-before-define': 'warn',
+    '@typescript-eslint/no-var-requires': 'warn'
   }
 }

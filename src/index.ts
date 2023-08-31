@@ -7,7 +7,6 @@ import path from 'path'
 import fileRouter from './routes/fileRoutes'
 import FileService from './services/fileService'
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config()
 
 const PORT = process.env.PORT || 3000

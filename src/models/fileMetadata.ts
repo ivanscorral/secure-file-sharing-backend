@@ -21,7 +21,6 @@ const generateRandomString = (length: number): string => {
   return result
 }
 
-// eslint-disable-next-line no-use-before-define
 @pre<FileMetadata>('save', function (next) {
   if (this.isNew) {
     console.debug('New file metadata')
