@@ -6,22 +6,21 @@ module.exports = {
   },
   extends: [
     'standard',
-    'plugin:@typescript-eslint/recommended' // TypeScript rules
+    'plugin:@typescript-eslint/recommended'
   ],
-  parser: '@typescript-eslint/parser', // Specifies the ESLint parser for TypeScript
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
-    project: './tsconfig.json' // Specify it only if you need @typescript-eslint/parser
+    project: './tsconfig.json'
   },
   plugins: [
-    '@typescript-eslint' // Use TypeScript-specific linting rules
+    '@typescript-eslint',
+    'unused-imports'
   ],
   overrides: [
     {
-      files: [
-        '.eslintrc.{js,cjs}'
-      ],
+      files: ['.eslintrc.{js,cjs}'],
       parserOptions: {
         project: './tsconfig.json'
       }
@@ -30,16 +29,15 @@ module.exports = {
       env: {
         node: true
       },
-      files: [
-        '.eslintrc.{js,cjs}'
-      ],
+      files: ['.eslintrc.{js,cjs}'],
       parserOptions: {
         sourceType: 'script'
       }
     }
   ],
   rules: {
-    // Place your custom rules here
-    '@typescript-eslint/no-explicit-any': 'off' // Example rule, adjust as needed
+    '@typescript-eslint/no-explicit-any': 'off',
+    'unused-imports/no-unused-imports': 'error',
+    '@typescript-eslint/no-unused-vars': 'warn'
   }
 }

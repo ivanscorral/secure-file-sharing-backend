@@ -1,4 +1,4 @@
-import { createCipheriv, getCiphers } from 'crypto'
+import { createCipheriv, getCiphers, createDecipheriv, randomBytes } from 'crypto'
 import { injectable } from 'inversify'
 
 interface CryptoConfig {
@@ -9,12 +9,16 @@ interface CryptoConfig {
 
 @injectable()
 class CryptoService {
-  private _config!: CryptoConfig
-
-  constructor (config: CryptoConfig = { key: Buffer.alloc(32), iv: Buffer.alloc(16), algorithm: 'aes-256-ctr' }) {
-    this.setConfig(config)
-  }
-
+  /**
+   * Validates the lengths of the key and initialization vector (IV) for a given algorithm.
+   *
+   * @param {string} algorithm - The encryption algorithm.
+   * @param {Buffer} key - The encryption key.
+   * @param {Buffer} iv - The initialization vector (IV).
+   * @throws {Error} Unknown algorithm: [algorithm]
+   * @throws {Error} Key length must be [keyLength] bytes for [algorithm]
+   * @throws {Error} IV length must be [ivLength] bytes for [algorithm]
+   */
   private validateKeyAndIvLengths (algorithm: string, key: Buffer, iv: Buffer) {
     const match = algorithm.match(/aes-(128|192|256)-/)
     if (!match) {
@@ -33,47 +37,52 @@ class CryptoService {
     }
   }
 
-  setIV (iv: Buffer) {
-    this.validateKeyAndIvLengths(this._config.algorithm, this._config.key, iv)
-    this._config.iv = iv
+  public generateKeyAndIv (config: CryptoConfig): CryptoConfig {
+    const key = randomBytes(32)
+    const iv = randomBytes(16)
+    try {
+      this.validateKeyAndIvLengths(config.algorithm, key, iv)
+      // reuse the configuration object to store the key and IV
+      config.key = key
+      config.iv = iv
+    } catch {
+      throw new Error(`Could not generate key and IV for ${config.algorithm}`)
+    }
+    return config
   }
 
-  setKey (key: Buffer) {
-    this.validateKeyAndIvLengths(this._config.algorithm, key, this._config.iv)
-    this._config.key = key
-  }
-
-  setAlgorithm (algorithm: string) {
-    this._config.algorithm = algorithm
-  }
-
-  set algorithm (algorithm: string) {
-    this.validateKeyAndIvLengths(algorithm, this._config.key, this._config.iv)
-  }
-
-  get algorithm () {
-    return this._config.algorithm
-  }
-
-  set config (newConfig: CryptoConfig) {
-    this.validateKeyAndIvLengths(newConfig.algorithm, newConfig.key, newConfig.iv)
-    this._config = newConfig
-  }
-
-  get config () {
-    return this._config
-  }
-
-  setConfig (newConfig: CryptoConfig) {
-    this.config = newConfig
-  }
-
-  async encrypt (data: Buffer): Promise<Buffer> {
-    const cipher = createCipheriv(this.config.algorithm, this.config.key, this.config.iv)
+  /**
+  * Encrypts the given data using the provided CryptoConfig.
+  *
+  * @param {Buffer} data - The data to be encrypted.
+  * @param {CryptoConfig} config - The configuration for the encryption.
+  * @return {Promise<Buffer>} The encrypted data as a Buffer.
+  */
+  async encrypt (data: Buffer, config: CryptoConfig): Promise<Buffer> {
+    this.validateKeyAndIvLengths(config.algorithm, config.key, config.iv)
+    const cipher = createCipheriv(config.algorithm, config.key, config.iv)
     return Buffer.concat([cipher.update(data), cipher.final()])
+  }
+
+  /**
+   * Decrypts the given data using the provided configuration.
+   *
+   * @param {Buffer} data - The data to be decrypted.
+   * @param {CryptoConfig} config - The configuration for the decryption.
+   * @return {Promise<Buffer>} A promise that resolves to the decrypted data.
+   */
+  async decrypt (data: Buffer, config: CryptoConfig): Promise<Buffer> {
+    this.validateKeyAndIvLengths(config.algorithm, config.key, config.iv)
+    const decipher = createDecipheriv(config.algorithm, config.key, config.iv)
+    return Buffer.concat([decipher.update(data), decipher.final()])
   }
 }
 
+/**
+ * Retrieves a list of AES algorithms.
+ *
+ * @return {string[]} An array of AES algorithms.
+ */
 function getAESAlgorithms (): string[] {
   // return algorithms containing aes
   const allAlgorithms = getCiphers()

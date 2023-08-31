@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { uploadFile, downloadFile, getFileStatus, testStoreMetadata } from '../controllers/fileController'
+import { uploadFile, downloadFile, getFileStatus } from '../controllers/fileController'
 
 const fileRouter: Router = Router()
 
@@ -11,7 +11,5 @@ fileRouter.get('/download/:id', downloadFile)
 
 // Optional: Status Endpoint to check file metadata or status
 fileRouter.get('/status/:id', getFileStatus)
-
-fileRouter.get('/testStoreMetadata', testStoreMetadata)
 
 export default fileRouter

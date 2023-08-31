@@ -1,16 +1,17 @@
 import { prop, modelOptions, pre, getModelForClass } from '@typegoose/typegoose'
 
 interface FileMetadataProps {
-  id: string;
+  id?: string;
+  originalFilename: string;
+  fileSize: number;
   filePath: string;
   key: Buffer;
   iv: Buffer;
-  expiresAt: Date;
+  expiresAt?: Date;
   downloadCount?: number;
-  maxDownloadCount: number;
+  maxDownloadCount?: number;
 }
 
-// Generate a random string
 const generateRandomString = (length: number): string => {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
   let result = ''
@@ -20,10 +21,10 @@ const generateRandomString = (length: number): string => {
   return result
 }
 
-// Hooks
 // eslint-disable-next-line no-use-before-define
 @pre<FileMetadata>('save', function (next) {
   if (this.isNew) {
+    console.debug('New file metadata')
     if (!this.expiresAt) {
       this.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24)
     }
@@ -37,7 +38,13 @@ const generateRandomString = (length: number): string => {
 @modelOptions({ schemaOptions: { timestamps: true } })
 class FileMetadata implements FileMetadataProps {
   @prop({ required: false, unique: true, index: true, default: () => generateRandomString(10) })
-  public id!: string
+  public id?: string
+
+  @prop({ required: true })
+  public originalFilename!: string
+
+  @prop({ required: true })
+  public fileSize!: number
 
   @prop({ required: true })
   public filePath!: string
@@ -48,17 +55,16 @@ class FileMetadata implements FileMetadataProps {
   @prop({ required: true })
   public iv!: Buffer
 
-  @prop({ required: true })
-  public expiresAt!: Date
+  @prop({ required: false, default: () => new Date(Date.now() + 1000 * 60 * 60 * 24) })
+  public expiresAt?: Date
 
   @prop({ default: 0 })
   public downloadCount?: number
 
-  @prop({ default: 0 })
-  public maxDownloadCount!: number
+  @prop({ default: 1 })
+  public maxDownloadCount?: number
 }
 
 const FileMetadataModel = getModelForClass(FileMetadata)
 
-export { FileMetadataModel }
-export { FileMetadata }
+export { FileMetadataModel, FileMetadataProps, FileMetadata }
