@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+// src/services/fileService.ts
 import FileMetadataRepository from '../repositories/fileMetadataRepository'
-import { FileMetadata } from '../models/fileMetadata'
-import { CryptoService, CryptoConfig } from './cryptoService'
+import { FileMetadata, FileMetadataProps } from '../models/fileMetadata'
+import CryptoService, { CryptoConfig } from './cryptoService'
 import { container } from '../inversify.config'
 import { injectable } from 'inversify'
 import path from 'path'
@@ -15,6 +15,7 @@ class FileService {
   private _basePath: string = path.resolve('./uploads')
   private _cryptoConfig: CryptoConfig
   private _metadataService: MetadataService
+
   constructor () {
     this._fileMetadataRepository = container.get<FileMetadataRepository>('FileMetadataRepository')
     this._cryptoService = container.get<CryptoService>('CryptoService')
@@ -47,19 +48,27 @@ class FileService {
     }
   }
 
+  async getTotalUsedSpace (): Promise<number> {
+    const files = await this._fileMetadataRepository.findAll()
+    return files.reduce<number>((total: number, file: FileMetadataProps) => { return total + file.fileSize }, 0)
+  }
+
   async deleteFile (id: string): Promise<void> {
-    // TODO Implement file deletion logic
+    if (await this._fileMetadataRepository.findById(id) === null) {
+      throw new Error('File not found')
+    }
+    // Delete file from disk
+    const filePath: string = path.resolve(this._basePath, `${id}.bin`)
+    console.debug(`Deleting file ${filePath}`)
+    await fs.unlink(filePath)
+    await this._fileMetadataRepository.deleteById(id)
   }
 
-  async incrementDownloadCount (id: string): Promise<void> {
-    // TODO Implement file download logic
+  private resolveEncryptedFilePath (id: string): string {
+    return path.resolve(this._basePath, `${id}.bin`)
   }
 
-  async handleFileExpiration (id: string): Promise<void> {
-    // TODO Implement file expiration logic
-  }
-
-  async encryptFile (filePath: string): Promise<any> {
+  async encryptFile (filePath: string): Promise<FileMetadata> {
     // generate a new key and iv
     this._cryptoService.generateKeyAndIv(this._cryptoConfig)
     // read the file
@@ -67,27 +76,30 @@ class FileService {
     // encrypt the data
     const encryptedData: Buffer = await this._cryptoService.encrypt(data, this._cryptoConfig)
     const fileMetadata: FileMetadata = await this._metadataService.createFileMetadata(filePath, encryptedData.length, this._cryptoConfig)
-    // return the encrypted data
-    return { encryptedData, fileMetadata }
+    // write encrypted data to file
+    await this.writeFile(this.resolveEncryptedFilePath(fileMetadata.id), encryptedData)
+    return fileMetadata
   }
 
   async uploadFile (file: Express.Multer.File): Promise<FileMetadata | null> {
     try {
-      const encryptedObject = (await this.encryptFile(file.path))
-      // await this.writeFile(newFilePath, encryptedData)
-      const fileMetadata: FileMetadata = encryptedObject.fileMetadata
-      const encryptedData: Buffer = encryptedObject.encryptedData
+      const fileMetadata = await this.encryptFile(file.path)
       console.log(fileMetadata)
-      return await this._fileMetadataRepository.create(fileMetadata)
+      return fileMetadata
     } catch (error) {
       console.log(error)
       return null
     }
   }
 
+  async getEncryptedFiles (): Promise<string[]> {
+    return await fs.readdir(this._basePath)
+  }
+
   async downloadFile (id: string): Promise<Buffer | null> {
     try {
       const metadata = await this._fileMetadataRepository.findById(id)
+      console.log(metadata)
       if (!metadata) {
         return null
       }
@@ -97,7 +109,7 @@ class FileService {
         iv: metadata.iv,
         algorithm: 'aes-256-ctr'
       }
-      const encryptedData = await this.readFile(metadata.filePath)
+      const encryptedData = await this.readFile(this.resolveEncryptedFilePath(id))
       const data = await this._cryptoService.decrypt(encryptedData, config)
 
       return data

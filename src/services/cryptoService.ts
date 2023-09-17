@@ -9,23 +9,13 @@ interface CryptoConfig {
 
 @injectable()
 class CryptoService {
-  /**
-   * Validates the lengths of the key and initialization vector (IV) for a given algorithm.
-   *
-   * @param {string} algorithm - The encryption algorithm.
-   * @param {Buffer} key - The encryption key.
-   * @param {Buffer} iv - The initialization vector (IV).
-   * @throws {Error} Unknown algorithm: [algorithm]
-   * @throws {Error} Key length must be [keyLength] bytes for [algorithm]
-   * @throws {Error} IV length must be [ivLength] bytes for [algorithm]
-   */
   private validateKeyAndIvLengths (algorithm: string, key: Buffer, iv: Buffer) {
     const match = algorithm.match(/aes-(128|192|256)-/)
     if (!match) {
       throw new Error(`Unknown algorithm: ${algorithm}`)
     }
 
-    const keyLength = parseInt(match[1], 10) / 8 // Convert bits to bytes
+    const keyLength = parseInt(match[1], 10) / 8
     const ivLength = 16 // 128 bits or 16 bytes for AES algorithms
 
     if (key.length !== keyLength) {
@@ -89,4 +79,5 @@ function getAESAlgorithms (): string[] {
   return allAlgorithms.filter(algorithm => algorithm.includes('aes'))
 }
 
-export { CryptoService, CryptoConfig, getAESAlgorithms }
+export default CryptoService
+export { CryptoConfig, getAESAlgorithms }

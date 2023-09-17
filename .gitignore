@@ -8,7 +8,7 @@ lerna-debug.log*
 .pnpm-debug.log*
 
 .build/
-
+uploads/
 .DS_Store
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
@@ -132,3 +132,4 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+.vscode/settings.json

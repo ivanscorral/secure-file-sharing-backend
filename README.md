@@ -26,6 +26,7 @@ A web-based platform for anonymous and secure file sharing. This project has rec
 
 - Node.js (v20.0.0 or higher)
 - MongoDB (v7.0 or higher)
+- Typescript (ts-node)  
 
 ### Steps
 
@@ -64,6 +65,13 @@ A web-based platform for anonymous and secure file sharing. This project has rec
     This will compile TypeScript and start the Express server.
 
 ## 📚 Usage
+
+### npm scripts
+
+- **npm start**: Runs the node command on the compilation folder.
+- **npm prestart**:
+- **npm lint**: Calls eslint to enforce the rules on all the project based on the .eslintrc.js configuration.
+- **npm lint:fix**: Calls eslint with the ```--fix```parameter. This will automatically fix all auto-fixable errors with the linting. Warnings will be ignored.
 
 Refer to the updated [API documentation](docs/api.md) for a complete guide on available endpoints and usage instructions.
 
