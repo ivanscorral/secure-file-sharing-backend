@@ -10,7 +10,6 @@ class FileMetadataRepository {
     // Initialize SQLite database
 
     this.db = new sqlite3.Database('./secure-file-sharing-backend.db')
-
   }
 
   async create (fileMetadata: FileMetadataProps): Promise<FileMetadata> {
@@ -56,7 +55,7 @@ class FileMetadataRepository {
     })
   }
 
-  async deleteById(id: string): Promise<void> {
+  async deleteById (id: string): Promise<void> {
     return new Promise((resolve, reject) => {
       const query = 'DELETE FROM FileMetadata WHERE id = ?'
       this.db.run(query, [id], (err) => {
@@ -81,17 +80,18 @@ class FileMetadataRepository {
       })
     })
   }
-  async getAllIdentifiers(): Promise<string[]> {
+
+  async getAllIdentifiers (): Promise<string[]> {
     return new Promise((resolve, reject) => {
-      const query = 'SELECT id FROM FileMetadata';
+      const query = 'SELECT id FROM FileMetadata'
       this.db.all(query, [], (err, rows: FileMetadata[]) => {
         if (err) {
-          reject(err);
-          return;
+          reject(err)
+          return
         }
-        resolve(rows.map((row) => row.id));
-      });
-    });
+        resolve(rows.map((row) => row.id))
+      })
+    })
   }
   // Add other methods like findAll, deleteById, getAllIdentifiers, updateById, etc., similarly.
 

@@ -7,8 +7,10 @@ yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
 
+secure-file-sharing-backend.db
+
 .build/
-uploads/
+uploads/*
 .DS_Store
 
 # Diagnostic reports (https://nodejs.org/api/report.html)

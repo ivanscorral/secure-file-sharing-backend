@@ -7,7 +7,7 @@ import path from 'path'
 import fileRouter from './routes/fileRoutes'
 import adminRouter from './routes/adminRoutes'
 import FileService from './services/fileService'
-import { PORT, MONGO_URI, DISABLE_DB } from './config'
+import { PORT } from './config'
 import FileMetadataRepository from './repositories/fileMetadataRepository'
 import DiskCleanupService from './services/maintenance/DiskCleanupService'
 
@@ -32,7 +32,6 @@ app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`)
 })
 
-
 async function fileDemo (): Promise<void> {
   const fileMetadata = await fileService.encryptFile(path.resolve('README.md'))
   console.log(fileMetadata)
@@ -49,9 +48,8 @@ async function downloadFileDemo (): Promise<void> {
 }
 async function listAllFiles (): Promise<void> {
   const files = await metadataRepository.getAllIdentifiers()
-  for(const file of files) {
+  for (const file of files) {
     console.log(file + ' - ' + JSON.stringify(await metadataRepository.findById(file)))
-
   }
 }
 
