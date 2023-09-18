@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # Create FileMetadata table in secure-file-sharing-backend.db
-sqlite3 ../../secure-file-sharing-backend.db <<EOF
--- Create FileMetadata table
+sqlite3 ../../secure-file-sharing-backend.db << EOF
 CREATE TABLE IF NOT EXISTS FileMetadata (
     id TEXT PRIMARY KEY,
     originalFilename TEXT NOT NULL,

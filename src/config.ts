@@ -26,7 +26,5 @@ export function nanoid (t: number = 21): string {
     return acc + transformedVal
   }, '')
 }
-export const EXAMPLE_FILE_ID = process.env.EXAMPLE_FILE_ID
 export const PORT = process.env.PORT || 3000
-export const MONGO_URI = process.env.MONGO_URI || 'http://localhost:27017/secure-file-sharing'
-export const DISABLE_DB = parseBool(process.env.DISABLE_DB || 'false')
+export const SQLITE_PATH = process.env.SQLITE_PATH || 'sqlite://:memory:'

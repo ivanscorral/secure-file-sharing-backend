@@ -1,15 +1,16 @@
 import sqlite3 from 'sqlite3'
 import { FileMetadata, FileMetadataProps } from '../models/fileMetadata'
 import { injectable } from 'inversify'
+import { SQLITE_PATH } from '../config'
 
 @injectable()
 class FileMetadataRepository {
   private db: sqlite3.Database
 
   constructor () {
-    // Initialize SQLite database
-
-    this.db = new sqlite3.Database('./secure-file-sharing-backend.db')
+    this.db = new sqlite3.Database(SQLITE_PATH, (err) => {
+      console.log(err)
+    })
   }
 
   async create (fileMetadata: FileMetadataProps): Promise<FileMetadata> {
