@@ -1,35 +1,104 @@
+import sqlite3 from 'sqlite3'
+import { FileMetadata, FileMetadataProps } from '../models/fileMetadata'
 import { injectable } from 'inversify'
-import { FileMetadata, FileMetadataModel } from '../models/fileMetadata'
 
 @injectable()
 class FileMetadataRepository {
-  async create (fileMetadata: FileMetadata): Promise<FileMetadata> {
-    const newFileMetadata = new FileMetadataModel(fileMetadata) // Using FileMetadataModel here
-    return await newFileMetadata.save()
+  private db: sqlite3.Database
+
+  constructor () {
+    // Initialize SQLite database
+
+    this.db = new sqlite3.Database('./secure-file-sharing-backend.db')
+
   }
 
-  async findById (id: string): Promise<FileMetadata | null> {
-    return await FileMetadataModel.findOne({ id }).exec() // Using FileMetadataModel here
+  async create (fileMetadata: FileMetadataProps): Promise<FileMetadata> {
+    return new Promise((resolve, reject) => {
+      const query = `
+        INSERT INTO FileMetadata(id, originalFilename, fileSize, key, iv, expiresAt, downloadCount, maxDownloadCount)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `
+      const values = [
+        fileMetadata.id,
+        fileMetadata.originalFilename,
+        fileMetadata.fileSize,
+        fileMetadata.key,
+        fileMetadata.iv,
+        fileMetadata.expiresAt?.toISOString(),
+        fileMetadata.downloadCount,
+        fileMetadata.maxDownloadCount
+      ]
+      console.log(query, values)
+      this.db.run(query, values, function (err) {
+        if (err) {
+          throw err
+        }
+        resolve(new FileMetadata(fileMetadata))
+      })
+    })
+  }
+
+  async findById (id: string): Promise<FileMetadata> {
+    return new Promise((resolve, reject) => {
+      const query = 'SELECT * FROM FileMetadata WHERE id = ?'
+      this.db.get(query, [id], (err, row) => {
+        if (err) {
+          reject(err)
+          return
+        }
+        if (row) {
+          resolve(FileMetadata.fromRow(row))
+        } else {
+          throw new Error(`[SQLITE] FileMetadata with id ${id} not found`)
+        }
+      })
+    })
+  }
+
+  async deleteById(id: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const query = 'DELETE FROM FileMetadata WHERE id = ?'
+      this.db.run(query, [id], (err) => {
+        if (err) {
+          reject(err)
+          return
+        }
+        resolve()
+      })
+    })
   }
 
   async findAll (): Promise<FileMetadata[]> {
-    return await FileMetadataModel.find().exec()
+    return new Promise((resolve, reject) => {
+      const query = 'SELECT * FROM FileMetadata'
+      this.db.all(query, [], (err, rows) => {
+        if (err) {
+          reject(err)
+          return
+        }
+        resolve(rows.map(FileMetadata.fromRow))
+      })
+    })
   }
-
-  async deleteById (id: string) {
-    await FileMetadataModel.findOneAndDelete({ id }).exec()
+  async getAllIdentifiers(): Promise<string[]> {
+    return new Promise((resolve, reject) => {
+      const query = 'SELECT id FROM FileMetadata';
+      this.db.all(query, [], (err, rows: FileMetadata[]) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(rows.map((row) => row.id));
+      });
+    });
   }
+  // Add other methods like findAll, deleteById, getAllIdentifiers, updateById, etc., similarly.
 
-  async getAllIdentifiers (): Promise<string[]> {
-    const files = await this.findAll()
-    return files.map(file => file.id as string)
+  // Close the database when you're done (ideally this would be in some sort of shutdown hook)
+  close () {
+    this.db.close()
   }
-
-  async updateById (id: string, updates: Partial<FileMetadata>): Promise<void> {
-    await FileMetadataModel.findOneAndUpdate({ id }, updates, { new: true }).exec() // Using FileMetadataModel here
-  }
-
-  // Add more methods as needed
 }
 
 export default FileMetadataRepository

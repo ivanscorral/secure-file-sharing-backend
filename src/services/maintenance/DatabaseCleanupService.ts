@@ -1,8 +1,8 @@
-import { FileMetadata } from './models/fileMetadata'
+import { FileMetadata } from '../../models/fileMetadata'
 import { injectable } from 'inversify'
-import { FileService } from './services/fileService'
-import { MetadataService } from './services/metadataService'
-import { container } from './inversify.config'
+import FileService from '../fileService'
+import MetadataService from '../metadataService'
+import { container } from '../../inversify.config'
 
 @injectable()
 class DatabaseCleanupService {
@@ -32,7 +32,7 @@ class DatabaseCleanupService {
     const dbEntries: FileMetadata[] = await this._metadataService.getAll()
 
     for (const record of dbEntries) {
-      const recordTime = record.createdAt.getTime()
+      const recordTime = record.expiresAt?.getTime() || 0
       if (currentTime - recordTime > expiryTime) {
         await this._metadataService.removeFileMetadata(record.id)
       }

@@ -2,7 +2,6 @@
 import 'reflect-metadata'
 import express, { Request, Response } from 'express'
 import cors from 'cors'
-import mongoose from 'mongoose'
 import { container } from './inversify.config'
 import path from 'path'
 import fileRouter from './routes/fileRoutes'
@@ -33,20 +32,6 @@ app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`)
 })
 
-// Database connection
-if (!DISABLE_DB) {
-  console.log('Connecting to MongoDB...')
-  connectToDatabase()
-}
-
-async function connectToDatabase () {
-  try {
-    console.debug('Connected to MongoDB')
-    await mongoose.connect(MONGO_URI)
-  } catch (err) {
-    console.error('An error occurred connecting to MongoDB:', err)
-  }
-}
 
 async function fileDemo (): Promise<void> {
   const fileMetadata = await fileService.encryptFile(path.resolve('README.md'))
@@ -64,7 +49,10 @@ async function downloadFileDemo (): Promise<void> {
 }
 async function listAllFiles (): Promise<void> {
   const files = await metadataRepository.getAllIdentifiers()
-  console.log(files)
+  for(const file of files) {
+    console.log(file + ' - ' + JSON.stringify(await metadataRepository.findById(file)))
+
+  }
 }
 
 async function cleanup (): Promise<void> {
@@ -75,6 +63,4 @@ async function cleanup (): Promise<void> {
 fileDemo().catch((err) => {
   console.error('An error occurred:', err)
 })
-downloadFileDemo()
 listAllFiles()
-cleanup()

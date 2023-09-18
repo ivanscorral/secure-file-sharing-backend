@@ -1,44 +1,53 @@
-// src/services/MetadataService.ts
-import { container } from '../inversify.config'
 import { injectable } from 'inversify'
 import { nanoid } from '../config'
-import FileMetadataRepository from '../repositories/fileMetadataRepository'
 import path from 'path'
-import { FileMetadata } from '../models/fileMetadata'
+import { FileMetadata, FileMetadataProps } from '../models/fileMetadata'
 import { CryptoConfig } from './cryptoService'
+import FileMetadataRepository from '../repositories/fileMetadataRepository'
+import { container } from '../inversify.config'
 
 @injectable()
-class MetadataService {
-  private _fileMetadataRepository: FileMetadataRepository
-  private _basePath: string = path.resolve('./uploads')
+export default class MetadataService {
+  private readonly fileMetadataRepository: FileMetadataRepository
+  private readonly basePath: string
 
   constructor () {
-    this._fileMetadataRepository = container.get<FileMetadataRepository>('FileMetadataRepository')
+    this.fileMetadataRepository = container.get<FileMetadataRepository>('FileMetadataRepository')
+    this.basePath = path.resolve('./uploads')
   }
 
   public async getAll (): Promise<FileMetadata[]> {
-    return await this._fileMetadataRepository.findAll()
+    return this.fileMetadataRepository.findAll()
   }
 
-  public async createFileMetadata (originalFilename: string, fileSize: number, cryptoConfig: CryptoConfig): Promise<FileMetadata> {
+  public async removeFileMetadata (id: string): Promise<void> {
+    await this.fileMetadataRepository.deleteById(id)
+  }
+
+  public async createFileMetadata (
+    originalFilename: string,
+    fileSize: number,
+    cryptoConfig: CryptoConfig
+  ): Promise<FileMetadata> {
     const fileId = nanoid(12)
-    const metadata: FileMetadata = {
+    const metadataProps: FileMetadataProps = {
       id: fileId,
       originalFilename,
       fileSize,
       key: cryptoConfig.key,
       iv: cryptoConfig.iv
     }
-    await this._fileMetadataRepository.create(metadata)
+    const metadata = new FileMetadata(metadataProps)
+    await this.fileMetadataRepository.create(metadata.toRow())
     return metadata
   }
 
   public async saveFileMetadata (metadata: FileMetadata): Promise<FileMetadata> {
-    return this._fileMetadataRepository.create(metadata)
+    await this.fileMetadataRepository.create(metadata.toRow())
+    return metadata
   }
 
   public async getFileMetadata (id: string): Promise<FileMetadata | null> {
-    return this._fileMetadataRepository.findById(id)
+    return this.fileMetadataRepository.findById(id)
   }
 }
-export default MetadataService

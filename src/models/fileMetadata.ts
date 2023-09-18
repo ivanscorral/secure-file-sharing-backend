@@ -1,6 +1,3 @@
-// src/models/fileMetadata.ts
-import { prop, modelOptions, getModelForClass } from '@typegoose/typegoose'
-
 interface FileMetadataProps {
   id: string;
   originalFilename: string;
@@ -12,33 +9,46 @@ interface FileMetadataProps {
   maxDownloadCount?: number;
 }
 
-@modelOptions({ schemaOptions: { timestamps: true } })
 class FileMetadata implements FileMetadataProps {
-  @prop({ required: true, unique: true, index: true })
   public id!: string
-
-  @prop({ required: true })
   public originalFilename!: string
-
-  @prop({ required: true })
   public fileSize!: number
-
-  @prop({ required: true })
   public key!: Buffer
-
-  @prop({ required: true })
   public iv!: Buffer
-
-  @prop({ required: false, default: () => new Date(Date.now() + 1000 * 60 * 60 * 24) })
   public expiresAt?: Date
-
-  @prop({ default: 0 })
   public downloadCount?: number
-
-  @prop({ default: 1 })
   public maxDownloadCount?: number
+
+  constructor (props: Partial<FileMetadata>) {
+    Object.assign(this, props)
+  }
+
+  // Optionally, include methods to convert between this class and SQLite row data
+  static fromRow (row: any): FileMetadata {
+    return new FileMetadata({
+      id: row.id,
+      originalFilename: row.originalFilename,
+      fileSize: row.fileSize,
+      key: row.key,
+      iv: row.iv,
+      expiresAt: row.expiresAt ? new Date(row.expiresAt) : undefined,
+      downloadCount: row.downloadCount,
+      maxDownloadCount: row.maxDownloadCount
+    })
+  }
+
+  toRow (): any {
+    return {
+      id: this.id,
+      originalFilename: this.originalFilename,
+      fileSize: this.fileSize,
+      key: this.key,
+      iv: this.iv,
+      expiresAt: this.expiresAt ? this.expiresAt.toISOString() : null,
+      downloadCount: this.downloadCount,
+      maxDownloadCount: this.maxDownloadCount
+    }
+  }
 }
 
-const FileMetadataModel = getModelForClass(FileMetadata)
-
-export { FileMetadataModel, FileMetadataProps, FileMetadata }
+export { FileMetadataProps, FileMetadata }
