@@ -4,7 +4,7 @@
   "description": "The back-end of the Secure File Sharing Platform handles file upload, encryption, storage, decryption, download, and expiration. It provides a secure and efficient means for temporary and anonymous file sharing.",
   "main": "index.js",
   "scripts": {
-    "start": "node .build/index.js",
+    "start": "tsc && node .build/index.js",
     "clean": "rimraf .build",
     "build": "tsc",
     "prestart": "npm run build",

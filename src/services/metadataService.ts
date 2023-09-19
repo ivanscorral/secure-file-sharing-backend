@@ -4,7 +4,6 @@ import path from 'path'
 import { FileMetadata, FileMetadataProps } from '../models/fileMetadata'
 import { CryptoConfig } from './cryptoService'
 import FileMetadataRepository from '../repositories/fileMetadataRepository'
-import { container } from '../inversify.config'
 
 @injectable()
 export default class MetadataService {
@@ -12,7 +11,7 @@ export default class MetadataService {
   private readonly basePath: string
 
   constructor () {
-    this.fileMetadataRepository = container.get<FileMetadataRepository>('FileMetadataRepository')
+    this.fileMetadataRepository = new FileMetadataRepository()
     this.basePath = path.resolve('./uploads')
   }
 

@@ -4,10 +4,6 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-function parseBool (value: string): boolean {
-  return value === 'true'
-}
-
 export function nanoid (t: number = 21): string {
   return crypto.getRandomValues(new Uint8Array(t)).reduce((acc: string, val: number) => {
     val &= 63 // Limit to 0-63

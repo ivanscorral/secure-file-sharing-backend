@@ -1,5 +1,4 @@
 // src/services/fileService.ts
-import FileMetadataRepository from '../repositories/fileMetadataRepository'
 import { FileMetadata, FileMetadataProps } from '../models/fileMetadata'
 import CryptoService, { CryptoConfig } from './cryptoService'
 import { container } from '../inversify.config'
@@ -10,14 +9,12 @@ import MetadataService from './metadataService'
 
 @injectable()
 class FileService {
-  private _fileMetadataRepository: FileMetadataRepository
   private _cryptoService: CryptoService
   private _basePath: string = path.resolve('./uploads')
   private _cryptoConfig: CryptoConfig
   private _metadataService: MetadataService
 
   constructor () {
-    this._fileMetadataRepository = container.get<FileMetadataRepository>('FileMetadataRepository')
     this._cryptoService = container.get<CryptoService>('CryptoService')
     this._metadataService = container.get<MetadataService>('MetadataService')
     this._cryptoConfig = {
@@ -49,19 +46,19 @@ class FileService {
   }
 
   async getTotalUsedSpace (): Promise<number> {
-    const files = await this._fileMetadataRepository.findAll()
+    const files = await this._metadataService.getAll()
     return files.reduce<number>((total: number, file: FileMetadataProps) => { return total + file.fileSize }, 0)
   }
 
   async deleteFile (id: string): Promise<void> {
-    if (await this._fileMetadataRepository.findById(id) === null) {
+    if (await this._metadataService.getFileMetadata(id) === null) {
       throw new Error('File not found')
     }
     // Delete file from disk
     const filePath: string = path.resolve(this._basePath, `${id}.bin`)
     console.debug(`Deleting file ${filePath}`)
     await fs.unlink(filePath)
-    await this._fileMetadataRepository.deleteById(id)
+    await this._metadataService.removeFileMetadata(id)
   }
 
   private resolveEncryptedFilePath (id: string): string {
@@ -98,7 +95,7 @@ class FileService {
 
   async downloadFile (id: string): Promise<Buffer | null> {
     try {
-      const metadata = await this._fileMetadataRepository.findById(id)
+      const metadata = await this._metadataService.getFileMetadata(id)
       console.log(metadata)
       if (!metadata) {
         return null

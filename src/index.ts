@@ -8,12 +8,13 @@ import fileRouter from './routes/fileRoutes'
 import adminRouter from './routes/adminRoutes'
 import FileService from './services/fileService'
 import { PORT } from './config'
-import FileMetadataRepository from './repositories/fileMetadataRepository'
 import DiskCleanupService from './services/maintenance/DiskCleanupService'
+import MetadataService from './services/metadataService'
 
 const fileService = container.get<FileService>('FileService')
-const metadataRepository = container.get<FileMetadataRepository>('FileMetadataRepository')
+const metadataService = container.get<MetadataService>('MetadataService')
 const diskCleanupService = container.get<DiskCleanupService>('DiskCleanupService')
+
 // Setup Express
 const app = express()
 app.use(express.json())
@@ -47,9 +48,9 @@ async function downloadFileDemo (): Promise<void> {
   }
 }
 async function listAllFiles (): Promise<void> {
-  const files = await metadataRepository.getAllIdentifiers()
+  const files = await metadataService.getAll()
   for (const file of files) {
-    console.log(file + ' - ' + JSON.stringify(await metadataRepository.findById(file)))
+    console.log(file + ' - ' + JSON.stringify(file))
   }
 }
 

@@ -1,12 +1,10 @@
 import sqlite3 from 'sqlite3'
-
 /**
  * Represents an object that can be identified.
  */
 export interface Identifiable {
     id: string
 }
-
 export abstract class GenericRepository<T extends Identifiable> {
   protected db: sqlite3.Database
   protected tableName: string
@@ -20,15 +18,24 @@ export abstract class GenericRepository<T extends Identifiable> {
   abstract fromRow(row: any): T
 
   /**
-   * Create a new entity in the database.
-   *
-   * @param {T} entity - The entity to be created.
-   * @return {Promise<T>} A promise that resolves to the created entity.
-   */
-  create (entity: T): Promise<T> {
-    const query = `INSERT INTO ${this.tableName} SET ?`
-    const row = this.toRow(entity)
-    return this.runQuery(query, row).then(() => entity)
+ * Create a new entity in the database.
+ *
+ * @param {T} entity - The entity to be created.
+ * @return {Promise<T>} A promise that resolves to the created entity.
+ */
+  async create (entity: T): Promise<T | null> {
+    try {
+      const row = this.toRow(entity)
+      const keys = Object.keys(row).join(', ')
+      const placeholders = Array(Object.keys(row).length).fill('?').join(', ')
+      const query = `INSERT INTO ${this.tableName} (${keys}) VALUES (${placeholders})`
+
+      await this.runQuery(query, Object.values(row))
+      return entity
+    } catch (error) {
+      console.error(`Error inserting record: ${error}`)
+      return null
+    }
   }
 
   /**
@@ -64,31 +71,28 @@ export abstract class GenericRepository<T extends Identifiable> {
   }
 
   /**
- * Runs a query on the database with the provided parameters.
- *
- * @param query - The SQL query to execute.
- * @param params - The parameters to bind to the query.
- * @returns A Promise that resolves when the query is successfully executed.
- */
-  private runQuery (query: string, params: any[]): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      this.db.run(query, params, (err: Error | null) => {
-        if (err) {
-          reject(err)
-          return
-        }
+  * Runs a query on the database with the provided parameters.
+  *
+  * @param query - The SQL query to execute.
+  * @param params - The parameters to bind to the query.
+  * @returns A Promise that resolves when the query is successfully executed.
+  */
+  private runQuery (query: string, params: any): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.db.run(query, params, function (err) {
+        if (err) reject(err)
         resolve()
       })
     })
   }
 
   /**
- * Executes the given query with the provided parameters and returns a promise that resolves to an array of results.
- *
- * @param query - The SQL query to execute.
- * @param params - The parameters to pass to the query.
- * @returns A promise that resolves to an array of results.
- */
+  * Executes the given query with the provided parameters and returns a promise that resolves to an array of results.
+  *
+  * @param query - The SQL query to execute.
+  * @param params - The parameters to pass to the query.
+  * @returns A promise that resolves to an array of results.
+  */
   private getQuery (query: string, params: any[]): Promise<any[]> {
     return new Promise<any[]>((resolve, reject) => {
       this.db.all(query, params, (err, rows) => {
